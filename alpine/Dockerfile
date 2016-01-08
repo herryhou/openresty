@@ -29,6 +29,7 @@ RUN echo "==> Installing dependencies..." \
     --error-log-path=$VAR_PREFIX/error.log \
     --pid-path=$VAR_PREFIX/nginx.pid \
     --lock-path=$VAR_PREFIX/nginx.lock \
+    --with-debug \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
