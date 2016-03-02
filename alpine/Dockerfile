@@ -1,6 +1,6 @@
-FROM alpine:3.2
+FROM alpine:3.3
 
-ENV OPENRESTY_VERSION 1.9.7.1
+ENV OPENRESTY_VERSION 1.9.7.3
 ENV OPENRESTY_PREFIX /opt/openresty
 ENV NGINX_PREFIX /opt/openresty/nginx
 ENV VAR_PREFIX /var/nginx
@@ -10,14 +10,15 @@ ENV VAR_PREFIX /var/nginx
 
 RUN echo "==> Installing dependencies..." \
  && apk update \
- && apk add make gcc musl-dev \
+ && apk add --virtual build-deps \
+    make gcc musl-dev \
     pcre-dev openssl-dev zlib-dev ncurses-dev readline-dev \
     curl perl \
  && mkdir -p /root/ngx_openresty \
  && cd /root/ngx_openresty \
  && echo "==> Downloading OpenResty..." \
- && curl -sSL http://openresty.org/download/ngx_openresty-${OPENRESTY_VERSION}.tar.gz | tar -xvz \
- && cd ngx_openresty-* \
+ && curl -sSL http://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz | tar -xvz \
+ && cd openresty-* \
  && echo "==> Configuring OpenResty..." \
  && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
  && echo "using upto $NPROC threads" \
@@ -49,8 +50,7 @@ RUN echo "==> Installing dependencies..." \
  && ln -sf $OPENRESTY_PREFIX/bin/resty /usr/local/bin/resty \
  && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* $OPENRESTY_PREFIX/luajit/bin/lua \
  && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* /usr/local/bin/lua \
- && apk del \
-    make gcc musl-dev pcre-dev openssl-dev zlib-dev ncurses-dev readline-dev curl perl \
+ && apk del build-deps \
  && apk add \
     libpcrecpp libpcre16 libpcre32 openssl libssl1.0 pcre libgcc libstdc++ \
  && rm -rf /var/cache/apk/* \
